@@ -1,0 +1,28 @@
+{
+  "train_rows": 763144,
+  "val_rows": 188967,
+  "test_rows": 188967,
+  "columns": [
+    "timestamp",
+    "processId",
+    "threadId",
+    "parentProcessId",
+    "userId",
+    "mountNamespace",
+    "processName",
+    "hostName",
+    "eventId",
+    "eventName",
+    "stackAddresses",
+    "argsNum",
+    "returnValue",
+    "args",
+    "sus",
+    "evil"
+  ],
+  "train_attack_count": 1269,
+  "test_sus_count": 171459,
+  "test_evil_count": 158432,
+  "sus_rate_pct": 90.7349,
+  "evil_rate_pct": 83.8411
+}
