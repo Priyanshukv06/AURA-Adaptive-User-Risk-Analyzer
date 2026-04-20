@@ -113,13 +113,13 @@ def score_event(event: EventLog, background_tasks: BackgroundTasks):
     ))
 
     # XGBoost score
-    xgb_score = float(xgb_model.predict_proba(scaled)[0, 1]) * 100
+    xgb_score = float(np.clip(xgb_model.predict(raw)[0], 0, 1)) * 100
 
     # Ensemble
     final_score = round((W_IF * if_score/100 + W_XGB * xgb_score/100) * 100, 2)
 
     # Action
-    if final_score < 30:
+    if final_score < 40:
         action, severity = "ALLOW",        "LOW"
     elif final_score < 70:
         action, severity = "REVIEW / OTP", "MEDIUM"
