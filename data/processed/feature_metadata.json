@@ -1,0 +1,17 @@
+{
+  "feature_cols": [
+    "uid_root",
+    "uid_daemon",
+    "uid_external",
+    "is_failure",
+    "is_success",
+    "process_freq",
+    "process_rarity",
+    "is_rare_process",
+    "unknown_parent_child",
+    "args_entropy"
+  ],
+  "n_known_pairs": 267,
+  "n_train_rows": 763144,
+  "rare_threshold": 0.001
+}
