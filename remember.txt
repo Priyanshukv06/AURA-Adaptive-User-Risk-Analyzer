@@ -1,0 +1,90 @@
+================================================================================
+                    AURA - EVERY SESSION STARTUP CHECKLIST
+================================================================================
+
+!!! IMPORTANT: Run these BEFORE starting any notebooks or API servers !!!
+
+Run in WSL Terminals (open 3 separate WSL tabs):
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ WSL TAB 1 — ZOOKEEPER                                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Command: ~/start-zookeeper.sh                                               │
+│ ✅ Wait for: binding to port 0.0.0.0:2181                                   │
+│ ⏱️  Startup time: ~5-10 seconds                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ WSL TAB 2 — KAFKA                                                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Command: ~/start-kafka.sh                                                   │
+│ ✅ Wait for: [KafkaServer id=0] started                                     │
+│ ⏱️  Startup time: ~10-15 seconds (after Zookeeper is ready)                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ WSL TAB 3 — REDIS                                                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Command: ~/start-redis.sh                                                   │
+│ ✅ Wait for: PONG                                                            │
+│ ⏱️  Startup time: ~2-3 seconds                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+                                  STARTUP ORDER
+================================================================================
+
+1. Start Zookeeper first (dependencies for Kafka)
+2. Start Kafka (depends on Zookeeper)
+3. Start Redis (independent)
+4. ✅ ALL READY - Now you can run notebooks and API
+
+================================================================================
+                            WINDOWS/JUPYTER SETUP
+================================================================================
+
+Once services are running in WSL:
+
+1. Open Jupyter/VS Code in Windows
+2. Run notebooks: 
+   - 02_feature_engineering.ipynb
+   - 03_isolation_forest.ipynb
+   - 04_shap_explainability.ipynb
+   
+3. Start FastAPI server (Phase 7):
+   cd src/api && python run.py
+
+4. API will be available at: http://localhost:8000
+   Docs at: http://localhost:8000/docs
+
+================================================================================
+                              TROUBLESHOOTING
+================================================================================
+
+❌ Zookeeper not starting?
+   - Check if port 2181 is already in use: netstat -an | grep 2181
+   - Kill existing process: pkill -f zookeeper
+
+❌ Kafka not starting?
+   - Make sure Zookeeper is running first
+   - Check logs: ~/kafka_2.13-3.5.0/logs/
+
+❌ Redis not starting?
+   - Check if port 6379 is already in use
+   - Kill existing process: pkill -f redis-server
+
+================================================================================
+                            QUICK REFERENCE
+================================================================================
+
+Zookeeper Port:  2181
+Kafka Port:      9092
+Redis Port:      6379
+
+Zookeeper logs:  ~/zookeeper-logs/
+Kafka logs:      ~/kafka_2.13-3.5.0/logs/
+Redis logs:      stderr (from start-redis.sh)
+
+================================================================================
+                              Last Updated: 2026-04-20
+================================================================================
