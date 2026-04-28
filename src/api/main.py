@@ -8,6 +8,10 @@ import json
 import redis
 import time
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ── Paths ──────────────────────────────────────────────────────
 MODELS_DIR    = Path("src/models/saved")
@@ -31,7 +35,14 @@ W_IF         = ensemble_config['W_IF']
 W_XGB        = ensemble_config['W_XGB']
 
 # ── Redis connection ────────────────────────────────────────────
-r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+r = redis.Redis(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=int(os.getenv("REDIS_PORT", 6379)),
+    password=os.getenv("REDIS_PASSWORD"),
+    username=os.getenv("REDIS_USERNAME", "default"),
+    decode_responses=True,
+    ssl=os.getenv("REDIS_SSL", "False").lower() == "true"
+)
 
 # ── FastAPI app ─────────────────────────────────────────────────
 app = FastAPI(

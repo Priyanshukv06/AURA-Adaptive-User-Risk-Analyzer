@@ -19,13 +19,19 @@ import pandas as pd
 from pathlib import Path
 from kafka import KafkaProducer
 from kafka.errors import NoBrokersAvailable
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ─────────────────────────────────────────────────────────────
 # CONFIG  — change STREAM_MODE here or pass --mode <demo|real>
 # ─────────────────────────────────────────────────────────────
-STREAM_MODE    = "demo"        # "demo" | "real"
-TOPIC          = "aura-beth-logs"
-BOOTSTRAP      = "localhost:9092"
+BOOTSTRAP      = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
+API_KEY        = os.getenv("KAFKA_API_KEY")
+API_SECRET     = os.getenv("KAFKA_API_SECRET")
+TOPIC          = os.getenv("KAFKA_TOPIC", "aura-beth-logs")
+STREAM_MODE    = os.getenv("STREAM_MODE", "demo")        # "demo" | "real"
 PROCESSED_DIR  = Path("data/processed")
 SLEEP_BETWEEN  = 0.05          # seconds between messages  (20 events/sec)
 
@@ -127,6 +133,10 @@ print(f"Connecting to Kafka at {BOOTSTRAP}...")
 try:
     producer = KafkaProducer(
         bootstrap_servers=BOOTSTRAP,
+        security_protocol="SASL_SSL",
+        sasl_mechanism="PLAIN",
+        sasl_plain_username=API_KEY,
+        sasl_plain_password=API_SECRET,
         value_serializer=lambda v: json.dumps(v).encode("utf-8"),
         key_serializer=lambda k: str(k).encode("utf-8"),
         acks=1,

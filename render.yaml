@@ -1,0 +1,65 @@
+services:
+
+  # ── FastAPI Scoring API ──────────────────────────────────────
+  - type: web
+    name: aura-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: REDIS_USERNAME
+        value: default
+      - key: REDIS_SSL
+        value: "False"
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        sync: false
+      - key: KAFKA_API_KEY
+        sync: false
+      - key: KAFKA_API_SECRET
+        sync: false
+      - key: KAFKA_TOPIC
+        value: aura-beth-logs
+
+  # ── Kafka Consumer Worker ────────────────────────────────────
+  - type: worker
+    name: aura-consumer
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python src/streaming/consumer.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: API_URL
+        sync: false          # set to https://aura-api.onrender.com after deploy
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: REDIS_USERNAME
+        value: default
+      - key: REDIS_SSL
+        value: "False"
+      - key: KAFKA_BOOTSTRAP_SERVERS
+        sync: false
+      - key: KAFKA_API_KEY
+        sync: false
+      - key: KAFKA_API_SECRET
+        sync: false
+      - key: KAFKA_TOPIC
+        value: aura-beth-logs
+      - key: STREAM_MODE
+        value: demo

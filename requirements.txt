@@ -1,0 +1,25 @@
+# API
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+
+# ML
+scikit-learn==1.4.2
+xgboost==2.0.3
+shap==0.45.0
+numpy==1.26.4
+pandas==2.2.2
+joblib==1.4.2
+
+# Streaming
+kafka-python==2.0.2
+redis==5.0.4
+
+# Dashboard
+streamlit>=1.40.0
+plotly==5.21.0
+
+# Utils
+python-dotenv==1.0.1
+requests>=2.32.0
+protobuf>=5.0,<7.0

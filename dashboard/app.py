@@ -8,6 +8,10 @@ from datetime import datetime
 import json
 import redis
 import time
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ─────────────────────────────────────────────────────────────
 # PAGE CONFIG
@@ -28,10 +32,18 @@ FEED_KEY = "aura:kafka:feed"
 @st.cache_resource
 def get_redis():
     try:
-        rc = redis.Redis(host="localhost", port=6379, decode_responses=True)
+        rc = redis.Redis(
+            host=os.getenv("REDIS_HOST") or st.secrets.get("REDIS_HOST", "localhost"),
+            port=int(os.getenv("REDIS_PORT") or st.secrets.get("REDIS_PORT", 6379)),
+            password=os.getenv("REDIS_PASSWORD") or st.secrets.get("REDIS_PASSWORD", ""),
+            username=os.getenv("REDIS_USERNAME") or st.secrets.get("REDIS_USERNAME", "default"),
+            decode_responses=True,
+            ssl=(os.getenv("REDIS_SSL") or st.secrets.get("REDIS_SSL", "False")).lower() == "true",
+        )
         rc.ping()
         return rc
-    except Exception:
+    except Exception as e:
+        st.warning(f"Redis not available: {e}")
         return None
 
 r_client = get_redis()
