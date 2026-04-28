@@ -1,5 +1,6 @@
 # 🛡️ AURA — Adaptive User Risk Analyzer
-### How to Start the Project (Quick Reference)
+
+Real-time behavioral anomaly detection framework leveraging ensemble machine learning (Isolation Forest + XGBoost) for zero-day threat identification in enterprise network logs. Processes streaming telemetry via Kafka, integrates with Redis for event persistence, and exposes REST API for model inference.
 
 ---
 
@@ -35,23 +36,30 @@ consumer.py  ◄────────────  Confluent Cloud Kafka
 
 ---
 
-## Every Time You Want to Run the Project
+## Deployment & Runtime
 
-### Step 0 — Wake Up Render (ALWAYS DO THIS FIRST)
+### Step 0 — Initialize Render Instance (Required for Cold Start)
 
-Render free tier sleeps after 15 min of inactivity. Wake it before starting:
+The Render free-tier service enters a sleep state after 15 minutes of inactivity. Initialize the instance before starting streaming operations:
 
 ```powershell
 Invoke-RestMethod -Uri "https://aura-api-w3hj.onrender.com/health"
 ```
 
-Expected response: `{"status":"ok","models_loaded":true}`
+**Expected response:**
+```json
+{"status":"ok","models_loaded":true}
+```
 
-Wait until you get this — it may take up to 30 seconds on cold start.
+Allow up to 30 seconds for the cold start to complete before proceeding.
 
 ---
 
-### Step 1 — Terminal 1: Start Consumer
+## Local Execution Workflow
+
+### 1. Start Kafka Consumer Stream
+
+Start the consumer in the first terminal to initialize Kafka subscription and establish Redis connectivity:
 
 ```powershell
 cd D:\CODE\Projects\AURA\AURA-Adaptive-User-Risk-Analyzer
@@ -59,7 +67,7 @@ conda activate aura
 python src/streaming/consumer.py
 ```
 
-Wait for:
+**Verify successful initialization:**
 ```
 Redis connected ✅
 Kafka Consumer connected ✅
@@ -68,7 +76,9 @@ Listening on topic: aura-beth-logs
 
 ---
 
-### Step 2 — Terminal 2: Start Producer
+### 2. Start Kafka Producer Stream
+
+In a second terminal, initiate the event producer to stream BETH dataset records to Kafka:
 
 ```powershell
 cd D:\CODE\Projects\AURA\AURA-Adaptive-User-Risk-Analyzer
@@ -76,13 +86,13 @@ conda activate aura
 python src/streaming/producer.py --mode demo
 ```
 
-You will see events being produced to Kafka.
+The producer will begin transmitting event records. Verify messages are being published to the Kafka topic.
 
 ---
 
-### Step 3 — Terminal 3: Start Dashboard (local only)
+### 3. Launch Analytics Dashboard (Local Development Only)
 
-Only needed if running locally instead of using the public Streamlit Cloud URL:
+Optionally run the Streamlit dashboard locally for development and testing (production instance deployed on Streamlit Cloud):
 
 ```powershell
 cd D:\CODE\Projects\AURA\AURA-Adaptive-User-Risk-Analyzer
@@ -90,7 +100,7 @@ conda activate aura
 streamlit run dashboard/app.py
 ```
 
-Opens at: `http://localhost:8501`
+**Access point:** `http://localhost:8501`
 
 ---
 
@@ -180,22 +190,24 @@ Invoke-RestMethod -Uri "https://aura-api-w3hj.onrender.com/score" `
 
 ## Troubleshooting
 
-| Problem | Fix |
+| Problem | Resolution |
 |---|---|
-| API returns `null` prefix or JSON error | Render cold start — hit `/health` first, wait for `ok`, retry |
-| Consumer not connecting to Kafka | Check `.env` KAFKA_* vars, confirm Confluent cluster is active |
-| Live stream tab shows no events | Make sure consumer.py AND producer.py are both running |
-| Redis connection error | Check REDIS_PASSWORD in `.env`, Redis Cloud free tier may have expired |
-| Streamlit Cloud shows old version | Go to app dashboard → `Reboot app` |
+| API returns `null` prefix or JSON parse error | Render instance requires initialization—invoke `/health` endpoint and wait 30 seconds for model loading |
+| Consumer fails to connect to Kafka | Verify KAFKA_BOOTSTRAP_SERVERS, KAFKA_API_KEY, and KAFKA_API_SECRET in `.env`; confirm Confluent Cloud cluster is active |
+| Live Stream tab displays no events | Ensure both consumer.py and producer.py are executing concurrently |
+| Redis connection failure | Validate REDIS_PASSWORD and REDIS_HOST configuration; Redis Cloud free tier may have quota expiration |
+| Streamlit Cloud dashboard displays stale version | Access app reboot control panel and select **Reboot app**
 
 ---
 
-## Demo Order for Recruiters
+## System Demonstration Workflow
 
-1. Open public Streamlit URL in browser
-2. Wake up Render: `Invoke-RestMethod .../health`
-3. Start `consumer.py` (Terminal 1)
-4. Start `producer.py` (Terminal 2)
-5. Show **Event Simulator** tab — set Attack preset, click Analyze Event
-6. Show **Live Kafka Stream** tab — toggle Auto-refresh, watch events flow
+**Standard evaluation sequence:**
+
+1. Access the public Streamlit dashboard
+2. Initialize Render instance: `Invoke-RestMethod .../health`
+3. Execute consumer stream (Terminal 1): `python src/streaming/consumer.py`
+4. Execute producer stream (Terminal 2): `python src/streaming/producer.py`
+5. Navigate to **Event Simulator** tab and execute test scenarios
+6. Monitor **Live Kafka Stream** tab for real-time event processing and risk scoring
 7. Show **Swagger UI** at `/docs` for API demo
