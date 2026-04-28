@@ -14,6 +14,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ─────────────────────────────────────────────────────────────
+# SECRETS HELPER (local .env + cloud st.secrets)
+# ─────────────────────────────────────────────────────────────
+def get_secret(key, default=""):
+    try:
+        return st.secrets[key]
+    except:
+        return os.getenv(key, default)
+
+# ─────────────────────────────────────────────────────────────
 # PAGE CONFIG
 # ─────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -23,7 +32,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-API_URL  = "https://aura-api-w3hj.onrender.com"
+API_URL  = get_secret("API_URL", "https://aura-api-w3hj.onrender.com").rstrip("/")
 FEED_KEY = "aura:kafka:feed"
 
 # ─────────────────────────────────────────────────────────────
@@ -33,12 +42,12 @@ FEED_KEY = "aura:kafka:feed"
 def get_redis():
     try:
         rc = redis.Redis(
-            host=os.getenv("REDIS_HOST") or st.secrets.get("REDIS_HOST", "localhost"),
-            port=int(os.getenv("REDIS_PORT") or st.secrets.get("REDIS_PORT", 6379)),
-            password=os.getenv("REDIS_PASSWORD") or st.secrets.get("REDIS_PASSWORD", ""),
-            username=os.getenv("REDIS_USERNAME") or st.secrets.get("REDIS_USERNAME", "default"),
+            host=get_secret("REDIS_HOST", "localhost"),
+            port=int(get_secret("REDIS_PORT", "6379")),
+            password=get_secret("REDIS_PASSWORD", ""),
+            username=get_secret("REDIS_USERNAME", "default"),
             decode_responses=True,
-            ssl=(os.getenv("REDIS_SSL") or st.secrets.get("REDIS_SSL", "False")).lower() == "true",
+            ssl=get_secret("REDIS_SSL", "False").lower() == "true"
         )
         rc.ping()
         return rc
