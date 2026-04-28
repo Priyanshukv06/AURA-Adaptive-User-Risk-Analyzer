@@ -23,7 +23,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-API_URL  = "http://127.0.0.1:8000"
+API_URL  = "https://aura-api-w3hj.onrender.com"
 FEED_KEY = "aura:kafka:feed"
 
 # ─────────────────────────────────────────────────────────────
@@ -98,7 +98,9 @@ for k, v in defaults.items():
 # ─────────────────────────────────────────────────────────────
 def score_event(payload: dict) -> dict:
     try:
-        resp = requests.post(f"{API_URL}/score", json=payload, timeout=5)
+        resp = requests.post(f"{API_URL}/score", json=payload, timeout=10)
+        print("STATUS:", resp.status_code)
+        print("RAW RESPONSE:", resp.text[:500])   # ← add this line
         return resp.json()
     except Exception as e:
         return {"error": str(e)}
