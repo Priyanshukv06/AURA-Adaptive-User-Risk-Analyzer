@@ -1,0 +1,9 @@
+{
+  "model": "XGBRegressor_Distilled",
+  "training_method": "if_score_distillation",
+  "n_estimators_used": 299,
+  "pr_auc": 0.9955,
+  "best_threshold": 0.7735,
+  "best_f1": 0.9904,
+  "gpu_used": true
+}

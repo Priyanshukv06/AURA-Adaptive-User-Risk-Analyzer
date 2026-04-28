@@ -208,7 +208,7 @@ data/processed/*.csv
 data/processed/*.json
 data/processed/*.png
 mlflow_runs/
-*.pkl
+
 *.joblib
 .cursorignore
 .cursorindexingignore
@@ -221,3 +221,10 @@ __pycache__/
 *.pyc
 *.pth
 models/saved/
+!src/models/saved/
+!src/models/saved/*.pkl
+!data/processed/
+!data/processed/*.csv
+!data/processed/*.npy
+!data/processed/*.json
+/data/processed/*.csv

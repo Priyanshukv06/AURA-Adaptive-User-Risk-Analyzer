@@ -1,0 +1,9 @@
+{
+  "model": "IsolationForest",
+  "n_estimators": 200,
+  "contamination": 0.0016628578616879645,
+  "pr_auc": 0.9947,
+  "roc_auc": 0.9896,
+  "best_threshold": 85.7927,
+  "best_f1": 0.9924
+}

@@ -1,0 +1,25 @@
+{
+  "project": "AURA - Adaptive User Risk Analyzer",
+  "dataset": "BETH Cybersecurity Dataset (UCL, 2021)",
+  "models": {
+    "isolation_forest": {
+      "pr_auc": 0.9947
+    },
+    "xgboost_semi_supervised": {
+      "pr_auc": 0.9955
+    },
+    "weighted_ensemble": {
+      "pr_auc": 0.9957,
+      "weights": {
+        "IF": 0.55,
+        "XGB": 0.45
+      }
+    }
+  },
+  "test_set_performance": {
+    "recall_evil": 0.9879,
+    "precision_evil": 0.9957,
+    "false_negatives": 1913,
+    "false_positives": 671
+  }
+}
