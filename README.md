@@ -15,7 +15,7 @@ producer.py  ──SASL_SSL──►  Confluent Cloud Kafka (aura-beth-logs)
                                       ▼
 consumer.py  ◄────────────  Confluent Cloud Kafka
     │
-    ├──► https://aura-api-w3hj.onrender.com/score  (FastAPI on Render)
+    ├──► https://aura-api-450k.onrender.com/score  (FastAPI on Render)
     │
     └──► Redis Cloud (asia-south1, port 14898)
                   │
@@ -29,7 +29,7 @@ consumer.py  ◄────────────  Confluent Cloud Kafka
 
 | Service | Platform | URL / Host |
 |---|---|---|
-| FastAPI Scoring API | Render (free) | `https://aura-api-w3hj.onrender.com` |
+| FastAPI Scoring API | Render (free) | `https://aura-api-450k.onrender.com` |
 | Redis Feed Store | Redis Cloud | `redis-14898.c330.asia-south1-1.gce.cloud.redislabs.com:14898` |
 | Kafka Broker | Confluent Cloud | `pkc-....confluent.cloud:9092` |
 | Dashboard | Streamlit Cloud | `https://your-app.streamlit.app` |
@@ -43,7 +43,7 @@ consumer.py  ◄────────────  Confluent Cloud Kafka
 The Render free-tier service enters a sleep state after 15 minutes of inactivity. Initialize the instance before starting streaming operations:
 
 ```powershell
-Invoke-RestMethod -Uri "https://aura-api-w3hj.onrender.com/health"
+Invoke-RestMethod -Uri "https://aura-api-450k.onrender.com/health"
 ```
 
 **Expected response:**
@@ -135,7 +135,7 @@ AURA-Adaptive-User-Risk-Analyzer/
 ## Environment Variables (`.env`)
 
 ```env
-API_URL=https://aura-api-w3hj.onrender.com
+API_URL=https://aura-api-450k.onrender.com
 
 REDIS_HOST=redis-14898.c330.asia-south1-1.gce.cloud.redislabs.com
 REDIS_PORT=14898
@@ -156,9 +156,9 @@ KAFKA_TOPIC=aura-beth-logs
 | Purpose | URL |
 |---|---|
 | Public Dashboard | `https://your-app.streamlit.app` |
-| API Health Check | `https://aura-api-w3hj.onrender.com/health` |
-| API Swagger Docs | `https://aura-api-w3hj.onrender.com/docs` |
-| API Stats | `https://aura-api-w3hj.onrender.com/stats` |
+| API Health Check | `https://aura-api-450k.onrender.com/health` |
+| API Swagger Docs | `https://aura-api-450k.onrender.com/docs` |
+| API Stats | `https://aura-api-450k.onrender.com/stats` |
 
 ---
 
@@ -166,10 +166,10 @@ KAFKA_TOPIC=aura-beth-logs
 
 ```powershell
 # Health check
-Invoke-RestMethod -Uri "https://aura-api-w3hj.onrender.com/health"
+Invoke-RestMethod -Uri "https://aura-api-450k.onrender.com/health"
 
 # Score an attack event
-Invoke-RestMethod -Uri "https://aura-api-w3hj.onrender.com/score" `
+Invoke-RestMethod -Uri "https://aura-api-450k.onrender.com/score" `
   -Method POST `
   -ContentType "application/json" `
   -Body '{"uid_external":1.0,"uid_root":0.0,"is_failure":1.0,"process_rarity":1.0,"is_rare_process":1.0,"unknown_parent_child":1.0,"args_entropy":4.5}'
