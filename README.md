@@ -1,12 +1,44 @@
 # 🛡️ AURA — Adaptive User Risk Analyzer
 
-Real-time behavioral anomaly detection framework leveraging ensemble machine learning (Isolation Forest + XGBoost) for zero-day threat identification in enterprise network logs. Processes streaming telemetry via Kafka, integrates with Redis for event persistence, and exposes REST API for model inference.
+**Real-time behavioral anomaly detection framework for enterprise network security**
+
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Cloud-FF4B4B?logo=streamlit&logoColor=white)](https://aura-adaptive-user-risk-analyzer06.streamlit.app/)
+[![API](https://img.shields.io/badge/FastAPI-Render-009639?logo=render&logoColor=white)](https://aura-api-450k.onrender.com)
+[![Python](https://img.shields.io/badge/Python-3.9+-3776ab?logo=python&logoColor=white)](https://www.python.org/)
+[![ML Models](https://img.shields.io/badge/ML-XGBoost%20%2B%20Isolation%20Forest-009688)]()
+
+Leverages ensemble machine learning (Isolation Forest + XGBoost) for zero-day threat identification in enterprise network logs. Processes streaming telemetry via Kafka, integrates with Redis for event persistence, and exposes REST API for real-time model inference.
+
+## 📋 Table of Contents
+
+- [Quick Links](#-quick-links)
+- [Architecture](#architecture)
+- [Cloud Services](#cloud-services-always-running--no-action-needed)
+- [Getting Started](#-getting-started)
+- [Local Execution](#local-execution-workflow)
+- [Project Structure](#key-files)
+- [Configuration](#️-environment-variables-env)
+- [API Endpoints](#-api-endpoints)
+- [Performance](#-model-performance)
+- [Troubleshooting](#-troubleshooting)
+
+## 🚀 Quick Links
+
+| Link | Purpose |
+|------|----------|
+| **[Live Dashboard](https://aura-adaptive-user-risk-analyzer06.streamlit.app/)** | Real-time monitoring & event simulation |
+| **[API Documentation](https://aura-api-450k.onrender.com/docs)** | Interactive Swagger UI |
+| **[Health Check](https://aura-api-450k.onrender.com/health)** | Verify API status |
 
 ---
 
 ## Architecture
 
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│                      AURA System Architecture                        │
+└─────────────────────────────────────────────────────────────────────┘
+
 BETH Dataset (local)
     │
     ▼
@@ -18,25 +50,26 @@ consumer.py  ◄────────────  Confluent Cloud Kafka
     ├──► https://aura-api-450k.onrender.com/score  (FastAPI on Render)
     │
     └──► Redis Cloud (asia-south1, port 14898)
-                  │
-                  ▼
-    Streamlit Cloud Dashboard (public URL)
+              │
+              ▼
+    Streamlit Cloud Dashboard
+    https://aura-adaptive-user-risk-analyzer06.streamlit.app/
 ```
 
 ---
 
 ## Cloud Services (Always Running — No Action Needed)
 
-| Service | Platform | URL / Host |
-|---|---|---|
-| FastAPI Scoring API | Render (free) | `https://aura-api-450k.onrender.com` |
-| Redis Feed Store | Redis Cloud | `redis-14898.c330.asia-south1-1.gce.cloud.redislabs.com:14898` |
-| Kafka Broker | Confluent Cloud | `pkc-....confluent.cloud:9092` |
-| Dashboard | Streamlit Cloud | `https://your-app.streamlit.app` |
+| Service | Platform | URL / Host | Status |
+|---|---|---|---|
+| **FastAPI Scoring API** | Render (free) | `https://aura-api-450k.onrender.com` | ✅ Live |
+| **Redis Feed Store** | Redis Cloud | `redis-14898.c330.asia-south1-1.gce.cloud.redislabs.com:14898` | ✅ Live |
+| **Kafka Broker** | Confluent Cloud | `pkc-....confluent.cloud:9092` | ✅ Live |
+| **Analytics Dashboard** | Streamlit Cloud | `https://aura-adaptive-user-risk-analyzer06.streamlit.app/` | ✅ Live |
 
 ---
 
-## Deployment & Runtime
+## 🏁 Getting Started
 
 ### Step 0 — Initialize Render Instance (Required for Cold Start)
 
@@ -56,6 +89,11 @@ Allow up to 30 seconds for the cold start to complete before proceeding.
 ---
 
 ## Local Execution Workflow
+
+**Prerequisites:**
+- Python 3.9+
+- Conda environment configured (see `.env` file)
+- All dependencies installed (`pip install -r requirements.txt`)
 
 ### 1. Start Kafka Consumer Stream
 
@@ -104,7 +142,7 @@ streamlit run dashboard/app.py
 
 ---
 
-## Key Files
+## 📁 Key Files
 
 ```
 AURA-Adaptive-User-Risk-Analyzer/
@@ -132,7 +170,7 @@ AURA-Adaptive-User-Risk-Analyzer/
 
 ---
 
-## Environment Variables (`.env`)
+## ⚙️ Environment Variables (`.env`)
 
 ```env
 API_URL=https://aura-api-450k.onrender.com
@@ -151,18 +189,34 @@ KAFKA_TOPIC=aura-beth-logs
 
 ---
 
-## Useful URLs
+## 📡 API Endpoints
 
-| Purpose | URL |
-|---|---|
-| Public Dashboard | `https://your-app.streamlit.app` |
-| API Health Check | `https://aura-api-450k.onrender.com/health` |
-| API Swagger Docs | `https://aura-api-450k.onrender.com/docs` |
-| API Stats | `https://aura-api-450k.onrender.com/stats` |
+| Endpoint | Method | Purpose | Response Time |
+|---|---|---|---|
+| `/health` | GET | Service status & model health | <100ms |
+| `/score` | POST | Risk scoring inference | ~8ms |
+| `/stats` | GET | System statistics | <100ms |
+| `/docs` | GET | Interactive Swagger UI | Live |
+
+**Base URL:** `https://aura-api-450k.onrender.com`
+
+### Example Requests
+
+**Health Check:**
+```bash
+curl https://aura-api-450k.onrender.com/health
+```
+
+**Score Prediction:**
+```bash
+curl -X POST https://aura-api-450k.onrender.com/score \
+  -H "Content-Type: application/json" \
+  -d '{"uid_external":1.0,"uid_root":0.0,"is_failure":1.0}'
+```
 
 ---
 
-## Quick API Test (PowerShell)
+## 🔧 PowerShell API Testing
 
 ```powershell
 # Health check
@@ -177,37 +231,54 @@ Invoke-RestMethod -Uri "https://aura-api-450k.onrender.com/score" `
 
 ---
 
-## Model Performance
+## 📊 Model Performance
 
-| Metric | Value |
-|---|---|
-| PR-AUC | 0.9937 |
-| Recall (evil events) | 98.77% |
-| Avg Inference Time | ~8ms |
-| Ensemble Weights | IF: 40% + XGB: 60% |
-
----
-
-## Troubleshooting
-
-| Problem | Resolution |
-|---|---|
-| API returns `null` prefix or JSON parse error | Render instance requires initialization—invoke `/health` endpoint and wait 30 seconds for model loading |
-| Consumer fails to connect to Kafka | Verify KAFKA_BOOTSTRAP_SERVERS, KAFKA_API_KEY, and KAFKA_API_SECRET in `.env`; confirm Confluent Cloud cluster is active |
-| Live Stream tab displays no events | Ensure both consumer.py and producer.py are executing concurrently |
-| Redis connection failure | Validate REDIS_PASSWORD and REDIS_HOST configuration; Redis Cloud free tier may have quota expiration |
-| Streamlit Cloud dashboard displays stale version | Access app reboot control panel and select **Reboot app**
+| Metric | Value | Notes |
+|---|---|---|
+| **PR-AUC** | 0.9937 | Excellent precision-recall balance |
+| **Recall (evil events)** | 98.77% | High sensitivity to attacks |
+| **Avg Inference Time** | ~8ms | Real-time processing capability |
+| **Ensemble Weights** | IF: 40% + XGB: 60% | Isolation Forest + XGBoost hybrid |
+| **Training Data** | BETH Dataset | 100K+ enterprise network logs |
+| **Features** | 7 behavioral | Process behavior anomalies |
 
 ---
 
-## System Demonstration Workflow
+## 🐛 Troubleshooting
 
-**Standard evaluation sequence:**
+| Problem | Resolution | Time To Fix |
+|---|---|---|
+| API returns `null` prefix or JSON parse error | Render instance requires initialization—invoke `/health` endpoint and wait 30 seconds for model loading | ~30s |
+| Consumer fails to connect to Kafka | Verify KAFKA_BOOTSTRAP_SERVERS, KAFKA_API_KEY, and KAFKA_API_SECRET in `.env`; confirm Confluent Cloud cluster is active | ~5m |
+| Live Stream tab displays no events | Ensure both consumer.py and producer.py are executing concurrently in separate terminals | ~2m |
+| Redis connection failure | Validate REDIS_PASSWORD and REDIS_HOST configuration; Redis Cloud free tier may have quota expiration | ~5m |
+| Dashboard displays outdated data | Hard refresh browser (Ctrl+Shift+R) or access app reboot control panel and select **Reboot app** | ~1m |
 
-1. Access the public Streamlit dashboard
-2. Initialize Render instance: `Invoke-RestMethod .../health`
-3. Execute consumer stream (Terminal 1): `python src/streaming/consumer.py`
-4. Execute producer stream (Terminal 2): `python src/streaming/producer.py`
-5. Navigate to **Event Simulator** tab and execute test scenarios
-6. Monitor **Live Kafka Stream** tab for real-time event processing and risk scoring
-7. Show **Swagger UI** at `/docs` for API demo
+---
+
+## 📽️ System Demonstration Workflow
+
+**Complete evaluation sequence (15 minutes):**
+
+| Step | Action | Command/URL | Expected Result |
+|---|---|---|---|
+| 1 | Access Dashboard | https://aura-adaptive-user-risk-analyzer06.streamlit.app/ | Live dashboard loads |
+| 2 | Initialize API | `Invoke-RestMethod https://aura-api-450k.onrender.com/health` | `{"status":"ok","models_loaded":true}` |
+| 3 | Start Consumer | `python src/streaming/consumer.py` (Terminal 1) | "Redis connected ✅" |
+| 4 | Start Producer | `python src/streaming/producer.py --mode demo` (Terminal 2) | Events begin streaming |
+| 5 | Test Event Simulator | Dashboard → Event Simulator tab | Risk scores displayed in real-time |
+| 6 | Monitor Live Stream | Dashboard → Live Kafka Stream tab | Event processing with scores |
+| 7 | Explore API Docs | https://aura-api-450k.onrender.com/docs | Interactive Swagger UI |
+
+---
+
+## 📝 License
+
+This project is part of enterprise security research. For production use, please review applicable licensing terms.
+
+## 🤝 Support
+
+For issues or questions:
+1. Check the [Troubleshooting](#-troubleshooting) section
+2. Verify API health: https://aura-api-450k.onrender.com/health
+3. Review logs in respective terminal streams
